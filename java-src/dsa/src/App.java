@@ -96,7 +96,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         String str = "racecar";
         System.out.println(reverseStringII(str));
-        int[] arr = {1, 3, 4, 2, 2};
+        int[] arr = {1, 3, 4, 2, 2, 5};
         System.out.println(findDuplicate(arr));
     }
 }
