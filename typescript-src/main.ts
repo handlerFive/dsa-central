@@ -84,7 +84,64 @@ export function fibonacciRecursion(n: number): number {
     return fibonacciRecursion(n - 1) + fibonacciRecursion(n - 2);
 }
 
+//Function to find the nth Fibonacci number - Using Memoization
+function fibonacciMemoization(n: number, memo: { [key: number]: number } = {}): number {
+    if (n in memo) return memo[n];
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    memo[n] = fibonacciMemoization(n - 1, memo) + fibonacciMemoization(n - 2, memo);
+    return memo[n];
+}
 
-let str = 'racecar';
-let reversedString = reverseStringIV(str);
-console.log(factorial(5));
+//Functin to find the duplicate value in an array
+function findDuplicate(arr: number[]): number {
+    let n = arr.length;
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+    //((n - 1) * (n - 2) / 2) is the sum of n natural numbers
+    return sum - ((n - 1) * (n - 2) / 2);
+}
+
+//call, bind and apply 
+function holler(this: any, greeting: string, punc: string): void {
+    console.log(greeting + ', ' + this.name + punc);
+}
+const person = { name: 'Jeremy' };
+holler.call(person, 'Hello', '!');
+holler.apply(person, ['Heya', '?']);
+const bindVal = holler.bind(person);
+bindVal('hola', '!!');
+
+let age: number = 5;
+let myname: string = "raunak";
+
+//Function to debounce 
+function debounce(func: (arg0: any) => void, delay: number | undefined) {
+    let timer: number | undefined;
+    return (...args: any) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(args)
+        }, delay);
+    }
+};
+
+//Function to throttle
+function throttle(func: (arg0: any) => void, limit: number | undefined) {
+    let inThrottle: boolean;
+    return function (...args: any) {
+        if (!inThrottle) {
+            func(args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+const x = fibonacciMemoization(10);
+console.log(x);
+let arr = [0, 1, 2, 3, 2];
+let duplicate = findDuplicate(arr);
+console.log(duplicate);
