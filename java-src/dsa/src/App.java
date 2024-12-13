@@ -1,4 +1,8 @@
 
+import java.util.Collections;
+import java.util.PriorityQueue;
+
+
 public class App {
 
     //Function to reverse a string - I
@@ -93,10 +97,24 @@ public class App {
         return sum - ((nums.length - 1) * nums.length) / 2;
     }
 
+    //2558. Take Gifts From the Richest Pile - LeetCode
+    public static long maxGifts(int[] piles, int k) {
+        long ans = 0;
+        PriorityQueue < Integer > pq = new PriorityQueue <> (Collections.reverseOrder()); //Max Heap
+        for (int i = 0; i < piles.length; i++) {
+            pq.add(piles[i]);
+        }
+        while(k-- > 0) {
+            int max = pq.poll();
+            pq.add((int) Math.floor(Math.sqrt(max)));
+        }
+        while (!pq.isEmpty()) {
+            ans += pq.poll();
+        }
+        return ans;
+    }
+    
     public static void main(String[] args) throws Exception {
-        String str = "racecar";
-        System.out.println(reverseStringII(str));
-        int[] arr = {1, 3, 4, 2, 2, 5};
-        System.out.println(findDuplicate(arr));
+        System.out.println(maxGifts(new int[]{25,64,9,4,100}, 4));
     }
 }
