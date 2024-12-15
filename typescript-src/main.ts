@@ -140,6 +140,47 @@ function throttle(func: (arg0: any) => void, limit: number | undefined) {
     }
 }
 
+//2593. Find Score of an Array After Marking All Elements - LeetCode
+function findScore(arr: number[]): number {
+    let ans = 0;
+    let n = arr.length;
+    let marked: boolean[] = new Array(n).fill(false);
+    let sorted: [number, number][] = new Array(n);
+    for (let i = 0; i < n; i++) {
+        sorted[i] = [arr[i], i];
+    }
+    sorted.sort((a, b) => a[0] - b[0]);
+    for (let i = 0; i < n; i++) {
+        let num: number = sorted[i][0];
+        let index: number = sorted[i][1];
+        if (!marked[index]) {
+            ans += num;
+            marked[index] = true;
+            if (index - 1 >= 0) marked[index - 1] = true;
+            if (index + 1 < n) marked[index + 1] = true;
+        }
+    }
+    return ans;
+}
+
+//Function to solve Leetcode 605 - Can Place Flowers
+function canPlaceFlowers(flowerbed: number[], n: number): boolean {
+    let count = 0;
+    for (let i = 0; i < flowerbed.length; i++) {
+        if (flowerbed[i] == 0) {
+            let isEmptyLeft: boolean = i == 0 || flowerbed[i - 1] == 0;
+            let isEmptyRight: boolean = i == flowerbed.length - 1 || flowerbed[i + 1] == 0;
+            if (isEmptyLeft && isEmptyRight) {
+                flowerbed[i] = 1;
+                count++;
+                if (count >= n) return true;
+            }
+        }
+    }
+    return count >= n;
+}
+
+
 const x = fibonacciMemoization(10);
 console.log(x);
 let arr = [0, 1, 2, 3, 2];
