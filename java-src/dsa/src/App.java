@@ -354,6 +354,89 @@ public class App {
         }
         return count;
     }
+
+    public int maxVowels(String s, int k) {
+        int i = 0, j = k - 1;
+        int sum = 0;
+        for(int x = i; x <= j; x++){
+            if(isVowel(s.charAt(x))) {
+                System.out.println("char : " + s.charAt(x));
+                sum++;
+            }
+        }
+        System.out.println("sum : " + sum);
+        int maxCount = sum;
+        j++;
+        System.out.println("maxCount : " + sum);
+        while(j < s.length() - 1) {
+            if(isVowel(s.charAt(i)) || isVowel(s.charAt(j))) {
+                i++;
+                sum++;
+            } else {
+                sum--;
+                j++;
+            }
+        }
+        maxCount = Math.max(maxCount, sum);
+        return maxCount;
+    }
+
+    //JP MORGAN SWE Cohort 2024 
+    //Problem statement - You are given two strings s and t, both of length n , consisting of lowercase English letters and integer K
+    //The cost to change the i-th character of s to t is abs(s[i] - t[i]) the absolute difference between the ASCII values of the characters
+    //Find the maximum length of a subsequence of s such that the cost of changing this subsequence to t is less than or equal to K
+    //Pure sliding window problem
+    public int equalSubstring(String s, String t, int K) {
+        int n = s.length();
+        int maxLen = 0;
+        int currCost = 0;
+        int left = 0;
+        for(int right = 0; right < n; right++) {
+            currCost += Math.abs(s.charAt(right) - t.charAt(right));
+            while(currCost > K) {
+                currCost -= Math.abs(s.charAt(left) - t.charAt(left));
+                left++;
+            }
+            maxLen = Math.max(maxLen, right - left + 1);
+        }
+        return maxLen;
+    } 
+
+    //JP MORGAN SWE Cohort 2024
+    //Problem statement - Researchers are conducting experiments with robot swarms and need to ensure that all robots 
+    //in the swarm have same inital power level before deployement. Each robot's power leven can be adjused using a charging device, which can either increase or decrease the 
+    //power of a single robot by 1 unit per minute. Given the power levels of n robots, determine the minium time (int minutes) 
+    //required to make all power levels equal
+    //Brute Force Approach - TLE Hit in coding round
+    public long minimumMinutes(List<Long> power) {
+        long minPower = Collections.min(power);
+        long maxPower = Collections.max(power);
+        long minMinutes = Integer.MAX_VALUE;
+        for(long i = minPower; i <= maxPower; i++) {
+            long minutes = 0;
+            for(long p : power) {
+                minutes += Math.abs(p - i);
+            }
+            minMinutes = Math.min(minMinutes, minutes);
+        }
+        return minMinutes;
+    }
+
+    //JP MORGAN SWE Cohort 2024
+    //Problem statement - Researchers are conducting experiments with robot swarms and need to ensure that all robots 
+    //in the swarm have same inital power level before deployement. Each robot's power leven can be adjused using a charging device, which can either increase or decrease the 
+    //power of a single robot by 1 unit per minute. Given the power levels of n robots, determine the minium time (int minutes) 
+    //required to make all power levels equal
+    //Optimized - Median Approach
+    public long minimumMinutesOptimized(List<Long> power) {
+        long minMinutes = 0;
+        Collections.sort(power);
+        long median = power.get(power.size() / 2);
+        for(long p : power) {
+            minMinutes += Math.abs(p - median); //Calculate the difference between the median and the power level of each robot
+        }
+        return minMinutes;
+    }
     
     public static void main(String[] args) throws Exception {
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
