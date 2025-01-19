@@ -1,13 +1,15 @@
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import static java.util.Comparator.comparingInt;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class App {
@@ -437,10 +439,58 @@ public class App {
         }
         return minMinutes;
     }
+
+    public boolean uniqueOccurrences(int[] arr) {
+        Map<Integer, Integer> freq = new HashMap<>();
+        Set<Integer> st = new HashSet<>();
+        for (int x : arr) {
+            freq.put(x, freq.getOrDefault(x, 0) + 1);
+        }
     
+        for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue());
+            if(st.contains(entry.getValue())) return false;
+        }
+        return true;
+    }
+    
+    public static List<Integer> populateArrayList(List<Integer> list) {
+        list = new ArrayList<>(Collections.nCopies(1000, 0));
+        return list;
+    }
+
+    public int[] asteroidCollision(int[] asteroids) {
+        List<Integer> arr = new ArrayList<>();
+        for(int i = 0; i < asteroids.length; i++) {
+            if(arr.isEmpty() || arr.get(arr.size() - 1) < 0 || asteroids[i] > 0) {
+                arr.add(asteroids[i]);
+            } else {
+                if(arr.get(arr.size() - 1) == Math.abs(asteroids[i])) {
+                    arr.remove(arr.size() - 1);
+                } else if(arr.get(arr.size() - 1) < Math.abs(asteroids[i])) {
+                    arr.remove(arr.size() - 1);
+                    i--;
+                }       
+            }
+        }
+        return arr.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    public static int[] convertListToIntArray(List<Integer> list) {
+        return list.stream().mapToInt(Integer::intValue).toArray();
+    }
+
     public static void main(String[] args) throws Exception {
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
+        // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
         // System.out.println(arrayScore(new int[] { 1, 2, 3, 4, 5 }));
-        System.out.println(reverseWordsNoStream("the sky is blue"));
+        // System.out.println(reverseWordsNoStream("the sky is blue"));
+        //To find the second highest number in an array using Java 8
+        List<Integer> list = Arrays.asList(112,23,45,65,75,34,90,34);
+        //int max = list.stream().max(Integer::compare).get();
+        //list.stream().filter(x -> x != max).max(Integer::compare).ifPresent(System.out::println);
+        list.stream().distinct().sorted(Comparator.reverseOrder()).skip(1).findFirst().ifPresent(System.out::println);
+
+
     }
 }
