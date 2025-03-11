@@ -13,23 +13,23 @@ function reverseStringII(str: string): string {
 }
 
 //Function to reverse a string - III
-function reverseStringIII(str: string): string {
-    return [...str].reverse().join('');
-}
+// function reverseStringIII(str: string): string {
+//     return [...str].reverse().join('');
+// }
 
 //Function to reverse a string - IV
-function reverseStringIV(str: string): string {
-    let x = [...str];
-    let start = 0, end = x.length - 1;
-    while (start < end) {
-        let temp = x[start];
-        x[start] = x[end];
-        x[end] = temp;
-        start++;
-        end--;
-    }
-    return x.join('');
-}
+// function reverseStringIV(str: string): string {
+//     let x = [...str];
+//     let start = 0, end = x.length - 1;
+//     while (start < end) {
+//         let temp = x[start];
+//         x[start] = x[end];
+//         x[end] = temp;
+//         start++;
+//         end--;
+//     }
+//     return x.join('');
+// }
 
 //Function to find factorial of a number - Using Iteration 
 function factorial(n: number): number {
@@ -140,28 +140,46 @@ function throttle(func: (arg0: any) => void, limit: number | undefined) {
     }
 }
 
-//2593. Find Score of an Array After Marking All Elements - LeetCode
-function findScore(arr: number[]): number {
-    let ans = 0;
-    let n = arr.length;
-    let marked: boolean[] = new Array(n).fill(false);
-    let sorted: [number, number][] = new Array(n);
-    for (let i = 0; i < n; i++) {
-        sorted[i] = [arr[i], i];
-    }
-    sorted.sort((a, b) => a[0] - b[0]);
-    for (let i = 0; i < n; i++) {
-        let num: number = sorted[i][0];
-        let index: number = sorted[i][1];
-        if (!marked[index]) {
-            ans += num;
-            marked[index] = true;
-            if (index - 1 >= 0) marked[index - 1] = true;
-            if (index + 1 < n) marked[index + 1] = true;
+function throttleII(myFunc : (arg0 : any) => void, limit : number) {
+    let lastFunc : number, lastRan : any;
+    return function(...args : any) {
+        if(!lastRan) {
+            myFunc(args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(() => {
+                if(Date.now() - lastRan >= limit) {
+                    myFunc(args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
         }
     }
-    return ans;
 }
+
+//2593. Find Score of an Array After Marking All Elements - LeetCode
+// function findScore(arr: number[]): number {
+//     let ans = 0;
+//     let n = arr.length;
+//     let marked: boolean[] = new Array(n).fill(false);
+//     let sorted: [number, number][] = new Array(n);
+//     for (let i = 0; i < n; i++) {
+//         sorted[i] = [arr[i], i];
+//     }
+//     sorted.sort((a, b) => a[0] - b[0]);
+//     for (let i = 0; i < n; i++) {
+//         let num: number = sorted[i][0];
+//         let index: number = sorted[i][1];
+//         if (!marked[index]) {
+//             ans += num;
+//             marked[index] = true;
+//             if (index - 1 >= 0) marked[index - 1] = true;
+//             if (index + 1 < n) marked[index + 1] = true;
+//         }
+//     }
+//     return ans;
+// }
 
 //Function to solve Leetcode 605 - Can Place Flowers
 function canPlaceFlowers(flowerbed: number[], n: number): boolean {
