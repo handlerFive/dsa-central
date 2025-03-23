@@ -835,6 +835,49 @@ public class App {
         }
     }
 
+    private void groupingAnagrams(String[] strs) {
+        //using count technique
+        Map<String, List<String>> mp = new HashMap<>();
+        for (String str : strs) {
+            int[] count = new int[26];
+            for (char c : str.toCharArray()) {
+                count[c - 'a']++;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 26; i++) {
+                if (count[i] > 0) {
+                    sb.append((char) ('a' + i));
+                    sb.append(count[i]);
+                }
+            }
+            String key = sb.toString();
+            if (!mp.containsKey(key)) {
+                mp.put(key, new ArrayList<>());
+            }
+            mp.get(key).add(str);
+        }
+        for (Map.Entry<String, List<String>> entry : mp.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+    }
+
+    private void groupingAnagramsSorting(String[] strs) {
+        Map<String, List<String>> mp = new HashMap<>();
+        for(String str : strs) {
+            char[] arr = str.toCharArray();
+            Arrays.sort(arr);
+            String key = new String(arr);
+            if(!mp.containsKey(key)) {
+                mp.put(key, new ArrayList<>());
+            }
+            mp.get(key).add(str);
+        }
+        for(Map.Entry<String, List<String>> entry : mp.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+    }
+
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws Exception {
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
@@ -894,5 +937,7 @@ public class App {
         //first non repetative character
         Character t = test.chars().mapToObj(c -> (char) c).collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting())).entrySet().stream().filter(e -> e.getValue() == 1).map(Map.Entry::getKey).findFirst().get();
         System.out.println(t);
+        //grouping anagrams
+        new App().groupingAnagramsSorting(new String[] {"eat", "tea", "tan", "ate", "nat", "bat"});
     }
 }
