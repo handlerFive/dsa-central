@@ -877,6 +877,98 @@ public class App {
         }
     }
 
+    //topological sort of a weighted graph using adjacency list
+    private class Graph {
+        private final int V;
+        private final List<List<int[]>> adj;
+
+        public Graph(int V) {
+            this.V = V;
+            adj = new ArrayList<>(V);
+            for (int i = 0; i < V; i++) {
+                adj.add(new ArrayList<>());
+            }
+        }
+
+        public void addEdge(int u, int v, int w) {
+            adj.get(u).add(new int[] { v, w });
+        }
+
+        public void topologicalSort() {
+            int[] indegree = new int[V];
+            for (int u = 0; u < V; u++) {
+                for (int[] edge : adj.get(u)) {
+                    indegree[edge[0]]++;
+                }
+            }
+            PriorityQueue<Integer> pq = new PriorityQueue<>();
+            for (int u = 0; u < V; u++) {
+                if (indegree[u] == 0) {
+                    pq.add(u);
+                }
+            }
+            while (!pq.isEmpty()) {
+                int u = pq.poll();
+                System.out.print(u + " ");
+                for (int[] edge : adj.get(u)) {
+                    int v = edge[0];
+                    indegree[v]--;
+                    if (indegree[v] == 0) {
+                        pq.add(v);
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private class NOWTAD {
+        private final int MOD = 1_000_000_007;
+        private Map<Integer, List<int[]>> mp = new HashMap<>();
+    
+        private void addEdges(int u, int v, int wt) {
+            mp.putIfAbsent(u, new ArrayList<>());
+            mp.putIfAbsent(v, new ArrayList<>());
+            mp.get(u).add(new int[] { v, wt });
+            mp.get(v).add(new int[] { u, wt });
+        }
+    
+        public int countPaths(int n, int[][] roads) {
+            for (int[] road : roads) {
+                int u = road[0];
+                int v = road[1];
+                int wt = road[2];
+                addEdges(u, v, wt);
+            }
+            PriorityQueue<long[]> pq = new PriorityQueue<>(Comparator.comparingLong(a -> a[0]));
+            long dist[] = new long[n];
+            int ways[] = new int[n];
+            Arrays.fill(dist, Long.MAX_VALUE);
+            dist[0] = 0;
+            ways[0] = 1;
+            pq.offer(new long[] { 0, 0 });
+            while (!pq.isEmpty()) {
+                long[] curr = pq.poll();
+                long d = curr[0];
+                int u = (int) curr[1];
+                if (d > dist[u])
+                    continue;
+                for (int[] nbr : mp.getOrDefault(u, new ArrayList<>())) {
+                    int v = nbr[0];
+                    long nDist = d + nbr[1];
+                    if (nDist < dist[v]) {
+                        dist[v] = nDist;
+                        ways[v] = ways[u];
+                        pq.offer(new long[] { nDist, v });
+                    } else if (nDist == dist[v]) {
+                        ways[v] = (ways[u] + ways[v]) % MOD;
+                    }
+                }
+            }
+            return ways[n - 1];
+        }
+    }
+    
     @SuppressWarnings("deprecation")
     public static void main(String[] args) throws Exception {
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
