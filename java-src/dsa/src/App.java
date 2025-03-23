@@ -924,7 +924,7 @@ public class App {
     @SuppressWarnings("unused")
     private class NOWTAD {
         private final int MOD = 1_000_000_007;
-        private Map<Integer, List<int[]>> mp = new HashMap<>();
+        private final Map<Integer, List<int[]>> mp = new HashMap<>();
     
         private void addEdges(int u, int v, int wt) {
             mp.putIfAbsent(u, new ArrayList<>());
