@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +20,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class App {
 
@@ -836,7 +845,7 @@ public class App {
     }
 
     private void groupingAnagrams(String[] strs) {
-        //using count technique
+        // using count technique
         Map<String, List<String>> mp = new HashMap<>();
         for (String str : strs) {
             int[] count = new int[26];
@@ -863,21 +872,21 @@ public class App {
 
     private void groupingAnagramsSorting(String[] strs) {
         Map<String, List<String>> mp = new HashMap<>();
-        for(String str : strs) {
+        for (String str : strs) {
             char[] arr = str.toCharArray();
             Arrays.sort(arr);
             String key = new String(arr);
-            if(!mp.containsKey(key)) {
+            if (!mp.containsKey(key)) {
                 mp.put(key, new ArrayList<>());
             }
             mp.get(key).add(str);
         }
-        for(Map.Entry<String, List<String>> entry : mp.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : mp.entrySet()) {
             System.out.println(entry.getKey() + " : " + entry.getValue());
         }
     }
 
-    //topological sort of a weighted graph using adjacency list
+    // topological sort of a weighted graph using adjacency list
     private class Graph {
         private final int V;
         private final List<List<int[]>> adj;
@@ -925,14 +934,14 @@ public class App {
     private class NOWTAD {
         private final int MOD = 1_000_000_007;
         private final Map<Integer, List<int[]>> mp = new HashMap<>();
-    
+
         private void addEdges(int u, int v, int wt) {
             mp.putIfAbsent(u, new ArrayList<>());
             mp.putIfAbsent(v, new ArrayList<>());
             mp.get(u).add(new int[] { v, wt });
             mp.get(v).add(new int[] { u, wt });
         }
-    
+
         public int countPaths(int n, int[][] roads) {
             for (int[] road : roads) {
                 int u = road[0];
@@ -968,7 +977,205 @@ public class App {
             return ways[n - 1];
         }
     }
-    
+
+    class Result {
+
+        /*
+         * Complete the 'maximumSum' function below.
+         *
+         * The function is expected to return a LONG_INTEGER.
+         * The function accepts following parameters:
+         * 1. LONG_INTEGER_ARRAY a
+         * 2. LONG_INTEGER m
+         */
+        private static void helper(int index, List<Long> a, List<List<Long>> res, List<Long> curr, long m, int n) {
+            if (index == n) {
+                res.add(new ArrayList<>(curr));
+                return;
+            }
+            curr.add(a.get(index));
+            helper(index + 1, a, res, curr, m, n);
+            curr.remove(curr.size() - 1);
+            helper(index + 1, a, res, curr, m, n);
+        }
+
+        public static long maximumSum(List<Long> a, long m) {
+            // Write your code here
+            List<List<Long>> res = new ArrayList<>();
+            helper(0, a, res, new ArrayList<>(), m, a.size());
+            long max = 0;
+            for (int i = 0; i < res.size(); i++) {
+                long sum = 0;
+                for (int j = 0; j < res.get(i).size(); j++) {
+                    sum += res.get(i).get(j);
+                }
+                max = Math.max(max, sum % m);
+            }
+            System.out.println(max);
+            return max;
+        }
+    }
+
+    public class Solution {
+        public static void main(String[] args) throws IOException {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+            int q = Integer.parseInt(bufferedReader.readLine().trim());
+
+            IntStream.range(0, q).forEach(qItr -> {
+                try {
+                    String[] firstMultipleInput = bufferedReader.readLine().replaceAll("\\s+$", "").split(" ");
+
+                    int n = Integer.parseInt(firstMultipleInput[0]);
+
+                    long m = Long.parseLong(firstMultipleInput[1]);
+
+                    List<Long> a = Stream.of(bufferedReader.readLine().replaceAll("\\s+$", "").split(" "))
+                            .map(Long::parseLong)
+                            .collect(toList());
+
+                    long result = Result.maximumSum(a, m);
+
+                    bufferedWriter.write(String.valueOf(result));
+                    bufferedWriter.newLine();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+
+            bufferedReader.close();
+            bufferedWriter.close();
+        }
+    }
+
+    public static int pairs(int k, List<Integer> arr) {
+        // Write your code here
+        int n = arr.size();
+        int count = 0;
+        int left = 0, right = 1;
+        Collections.sort(arr);
+        while (right < n) {
+            int diff = arr.get(right) - arr.get(left);
+            if (diff == k) {
+                count++;
+                left++;
+                right++;
+            } else if (diff < k) {
+                right++;
+            } else {
+                left++;
+            }
+
+        }
+        return count;
+    }
+
+    public static long maximumSum(List<Long> a, long m) {
+        long maxSum = 0;
+        long prefixSum = 0;
+        TreeSet<Long> treeSet = new TreeSet<>();
+        treeSet.add(0L);
+        for (long x : a) {
+            prefixSum = (prefixSum + x) % m;
+            maxSum = Math.max(maxSum, prefixSum);
+            Long high = treeSet.ceiling(prefixSum + 1);
+            if (high != null) {
+                maxSum = Math.max(maxSum, (prefixSum - high + m) % m);
+            }
+            treeSet.add(prefixSum);
+        }
+        return maxSum;
+    }
+
+    static long countTriplets(List<Long> arr, long r) {
+        long count = 0;
+        Map<Long, Long> countMp = new HashMap<>();
+        Map<Long, Long> pairMp = new HashMap<>();
+        for (long x : arr) {
+            if (pairMp.containsKey(x)) {
+                count += pairMp.get(x);
+            }
+            if (countMp.containsKey(x)) {
+                pairMp.put(x * r, pairMp.getOrDefault(x * r, 0L) + countMp.get(x));
+            }
+            countMp.put(x * r, countMp.getOrDefault(x * r, 0L) + 1);
+        }
+        return count;
+    }
+
+    public static int sherlockAndAnagrams(String s) {
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = i; j < s.length(); j++) {
+                char[] arr = s.substring(i, j + 1).toCharArray();
+                Arrays.sort(arr);
+                String keyVal = String.valueOf(arr);
+
+                map.put(keyVal, map.getOrDefault(keyVal, 0) + 1);
+            }
+        }
+        int pairs = 0;
+        for (String key : map.keySet()) {
+            Integer val = map.get(key);
+            pairs += (val * (val - 1)) / 2;
+        }
+        return pairs;
+    }
+
+    public static int sherlockAndAnagramsII(String s) {
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            int[] freq = new int[26];
+            for (int j = i; j < s.length(); j++) {
+                freq[s.charAt(j) - 'a']++;
+                String key = Arrays.toString(freq);
+                map.put(key, map.getOrDefault(key, 0) + 1);
+            }
+        }
+        int count = 0;
+        for (int val : map.values()) {
+            count += (val * (val - 1)) / 2;
+        }
+        return count;
+    }
+
+    // JP MORGAN Code Pair Interview
+    public static void funAnagrams(List<String> text) {
+        Set<String> st = new HashSet<>();
+        List<String> res = new ArrayList<>();
+        for (String s : text) {
+            char[] arr = s.toCharArray();
+            Arrays.sort(arr);
+            if (!st.contains(Arrays.toString(arr))) {
+                st.add(Arrays.toString(arr));
+                res.add(s);
+            }
+        }
+        for (String s : res) {
+            System.out.println(s);
+        }
+    }
+
+    // Follow up to make it in place - I cooked. ;-)
+    public static void funAnagramsII(List<String> text) {
+        String temp;
+        temp = text.get(0);
+        List<String> res = new ArrayList<>();
+        for (String s : text) {
+            char[] arr = s.toCharArray();
+            Arrays.sort(arr);
+            String sorted = new String(arr);
+            if (!temp.equals(sorted)) {
+                res.add(s);
+            }
+            temp = sorted;
+        }
+        for (String s : res) {
+            System.out.println(s);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public static void main(String[] args) throws Exception {
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
@@ -1018,18 +1225,26 @@ public class App {
 
         Date staticDate = new Date("01/01/2024");
         employees.stream().filter(e -> e.joiningDate.before(staticDate)).forEach(e -> System.out.println(e.name));
-        //use partitioningBy to split the list of employees into two groups based on the department
-        Map<Boolean, List<Employee>> partitioned = employees.stream().collect(Collectors.partitioningBy(e -> e.department.equals("Engineering")));
+        // use partitioningBy to split the list of employees into two groups based on
+        // the department
+        Map<Boolean, List<Employee>> partitioned = employees.stream()
+                .collect(Collectors.partitioningBy(e -> e.department.equals("Engineering")));
         System.out.println(partitioned.get(true).size());
         System.out.println(partitioned.get(false).size());
-        int[][] xx = {{1, 2}, {3, 4}, {5, 6} , {7, 8}, {9, 10}};
+        int[][] xx = { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 9, 10 } };
         List<Integer> l = Arrays.asList(xx).stream().flatMapToInt(Arrays::stream).boxed().collect(Collectors.toList());
         System.out.println(l);
         String test = "Testing".toLowerCase();
-        //first non repetative character
-        Character t = test.chars().mapToObj(c -> (char) c).collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting())).entrySet().stream().filter(e -> e.getValue() == 1).map(Map.Entry::getKey).findFirst().get();
+        // first non repetative character
+        Character t = test.chars().mapToObj(c -> (char) c)
+                .collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()))
+                .entrySet().stream().filter(e -> e.getValue() == 1).map(Map.Entry::getKey).findFirst().get();
         System.out.println(t);
-        //grouping anagrams
-        new App().groupingAnagramsSorting(new String[] {"eat", "tea", "tan", "ate", "nat", "bat"});
+        // grouping anagrams
+        new App().groupingAnagramsSorting(new String[] { "eat", "tea", "tan", "ate", "nat", "bat" });
+
+        Result.maximumSum(Arrays.asList(3L, 3L, 9L, 9L, 5L), 7L);
+
+        funAnagrams(Arrays.asList("code", "doce", "cdeo", "ate", "eat", "bat", "tab"));
     }
 }
