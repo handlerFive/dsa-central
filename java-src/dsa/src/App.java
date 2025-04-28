@@ -1088,6 +1088,7 @@ public class App {
         return maxSum;
     }
 
+    @SuppressWarnings("unused")
     static long countTriplets(List<Long> arr, long r) {
         long count = 0;
         Map<Long, Long> countMp = new HashMap<>();
@@ -1176,6 +1177,22 @@ public class App {
         }
     }
 
+    public long countSubarrays(int[] nums, long k) {
+        long res = 0;
+        int start = 0;
+        int n = nums.length;
+        long sum = 0;
+        for (int end = 0; end < n; end++) {
+            sum += nums[end];
+            while (sum * (end - start + 1) >= k) {
+                sum -= nums[start];
+                start++;
+            }
+            res += (end - start + 1);
+        }
+        return res;
+    }
+    
     @SuppressWarnings("deprecation")
     public static void main(String[] args) throws Exception {
         // System.out.println(maxGifts(new int[]{25, 64, 9, 4, 100}, 4));
